@@ -1,0 +1,25 @@
+
+Instructions for using Git:
+
+FUCK
+
+Once changes are made to local repository:
+ 
+  5. git add <filename(s)>
+	- propose changes by "add"ing them to the Index
+	- Ex: "git add myFile1.py myFile2.py myFile3.py"
+
+  2. git commit -m "Add brief message about what you changed/ added."
+	- this will commit the changes to the Head
+
+  3. git push origin master
+	- use this EXACT command to push the proposed changes to the master repository (in the cloud)
+
+
+
+To check for Changes to Master:
+
+  1. git pull
+	- use this EXACT command to pull any changes other contributers may have made
+	- check out http://rogerdudler.github.io/git-guide/ to learn how to merge repositories
+
