@@ -1,9 +1,11 @@
 
 Instructions for using Git:
 
+FUCK
+
 Once changes are made to local repository:
  
-  1. git add <filename(s)>
+  5. git add <filename(s)>
 	- propose changes by "add"ing them to the Index
 	- Ex: "git add myFile1.py myFile2.py myFile3.py"
 
