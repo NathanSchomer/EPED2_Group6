@@ -9,15 +9,15 @@ y=2;
 
 % Movement of ball
 while y>0
-y=(initVel*(sind(startAng))*t)-((.5*9.81)*(t^2))+2;
+y=(initVel*(sind(startAng))*t)-((.5*9.81)*(t^2))+2; % position equations
 x=(initVel*cosd(startAng))*t;
-xMovBall=x+xball;
+xMovBall=x+xball; % position change for ball
 yMovBall=y+yball;
-fill(xMovBall,yMovBall,'g');
+fill(xMovBall,yMovBall,'g'); % defines ball in motion
 axis([-1 100 -1 100])
-xlabel('Distance')
-ylabel('Height')
-pause(.00001)
+xlabel('Distance(m)')
+ylabel('Height(m)')
+pause(.00001) %allows visual of motion
 t=t+.01;
 end
 end
