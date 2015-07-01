@@ -17,10 +17,10 @@ end
 launchVel=input('enter launch speed between 0 and 20 m/s:\n');
 w=2;
 while w > 1
-if launchAng > 90
-    launchAng = input('Please choose a lower number:\n');
-elseif launchAng < 0 
-    launchAng = input('Please choose a higher number:\n');
+if launchVel > 20
+    launchVel = input('Please choose a lower number:\n');
+elseif launchVel < 0 
+    launchVel = input('Please choose a higher number:\n');
 else
     w=0;
 end
