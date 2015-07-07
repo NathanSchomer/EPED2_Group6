@@ -14,7 +14,9 @@ x=(initVel*cosd(startAng))*t;
 xMovBall=x+xball; % position change for ball
 yMovBall=y+yball;
 fill(xMovBall,yMovBall,'g'); % defines ball in motion
+grid on
 axis([-1 100 -1 100])
+title('Projectile Motion')
 xlabel('Distance(m)')
 ylabel('Height(m)')
 pause(.00001) %allows visual of motion
