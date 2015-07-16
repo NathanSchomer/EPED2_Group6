@@ -22,7 +22,7 @@ function varargout = firstTryGUI(varargin)
 
 % Edit the above text to modify the response to help firstTryGUI
 
-% Last Modified by GUIDE v2.5 16-Jul-2015 11:35:51
+% Last Modified by GUIDE v2.5 16-Jul-2015 11:49:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,7 +57,6 @@ handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
-calibr8d=0;
 
 % UIWAIT makes firstTryGUI wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -84,7 +83,9 @@ function Calibrate_Callback(hObject, eventdata, handles)
  [accelerometer.s,flag]=setupSerial(comPort);
 
  calCo = calibrate(accelerometer.s);
- calibr8d=1;
+ guidata(hObject, handles);% Update handles variables
+
+
 
 
 % --- Executes on button press in Exit.
@@ -101,19 +102,18 @@ function Plot_Callback(hObject, eventdata, handles)
 % hObject    handle to Plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if calibr8d==0;
-
-else
+    axes(handles.axes1)
     [gx, gy, gz]=readAcc(accelerometer,calCo)
     cla %Slow way of replotting
     line([0 gx],[0 0],[0 0],'Linewidth',2, 'color', 'b')
     line([0 0],[0 gy],[0 0],'Linewidth',2, 'color', 'g')
     line([0 0],[0 0],[0 gz],'Linewidth',2, 'color', 'r')
     line([0 gx], [0 gy], [0 gz], 'Linewidth', 4, 'color', 'k');
-    axis([-1.5 1.5 -1.5 1.5 -1.5 1.5]);
     xlabel('x')
     ylabel('y')
     zlabel('z')
     grid on
     drawnow;
-end
+    
+    
+    guidata(hObject, handles);% Update handles variables
