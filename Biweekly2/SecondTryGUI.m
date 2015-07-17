@@ -117,22 +117,33 @@ function Plot_Callback(hObject, eventdata, handles)
 % hObject    handle to Plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-tic
-while toc < 10
+Gx=rand(1,50);
+Gy=rand(1,50);
+Gz=rand(1,50);
+Rezult=rand(1,50);
+
+tic;
+while toc < 20
+    cla
+    [gx, gy, gz]=readAcc(handles.accelerometer,handles.calCo)
+    result=sqrt((gx^2)+(gy^2)+(gz^2));
+    Gx=[Gx(2:end) gx];
+    Gy=[Gy(2:end) gy];
+    Gz=[Gz(2:end) gz];
+    Rezult=[Rezult(2:end) result];
     axes(handles.axes1)
-    axis([ -1.5 1.5 -1.5 1.5 -1.5 1.5])
-    [gx, gy, gz]=readAcc(handles.accelerometer,handles.calCo);
-    cla %Slow way of replotting
-    line([0 gx],[0 0],[0 0],'Linewidth',2, 'color', 'b')
-    line([0 0],[0 gy],[0 0],'Linewidth',2, 'color', 'g')
-    line([0 0],[0 0],[0 gz],'Linewidth',2, 'color', 'r')
-    line([0 gx], [0 gy], [0 gz], 'Linewidth', 4, 'color', 'k');
-    xlabel('x')
-    ylabel('y')
-    zlabel('z')
+    plot(Gx,'b')
+    hold on
+    plot(Gy,'r')
+    plot(Gz,'g')
+    plot(Rezult,'k')
+    axis([0 50 -1.5 1.5])
+    drawnow
+    title('Rolling Plot')
+    xlabel('time')
+    ylabel('value')
+    legend('x value','y value','z value','resultant value','location','best')
     grid on
-    drawnow;
-    
 end
 guidata(hObject, handles);% Update handles variables
 
@@ -142,18 +153,21 @@ function Plot_Circle_Callback(hObject, eventdata, handles)
 % hObject    handle to Plot_Circle (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 circle_vector = (0:360);
 x = cosd(circle_vector);
 y = sind(circle_vector);
+axes(handles.axes2)
 tic;
 circle = fill(x, y, [0 0 1]);
-
 while toc < 10
     axes(handles.axes2)
-    axis([-1.5 1.5 -1.5 1.5])
     [gx, gy, gz]=readAcc(handles.accelerometer,handles.calCo);
-    rotate(circle,[gx, gy], 'origin')
+    fill( y-(10*gy),x-(10*gx), [0 0 1])
+    axis([-10 10 -10 10])
+    drawnow
+    ylabel('y')
+    xlabel('x')
+    title('Cursor')
 end
 
 

@@ -4,7 +4,9 @@ close all
 clc
 %%Part 1
  %setup serial communication
- comPort='/dev/tty.usbmodem1421'; 
+ comPort='COM6'; 
+ % chandler /dev/tty.usbmodem1421
+ % bobby COM6
  [accelerometer.s,flag]=setupSerial(comPort);
  
  %calibrate accel
@@ -14,44 +16,55 @@ clc
  
  
 %%1A 
-x_tot = 0;
-y_tot = 0;
-z_tot = 0;
-
 subplot(2, 1, 1)
-while toc < 2
+while toc < 10
+    cla
     [x_curr, y_curr, z_curr]=readAcc(accelerometer,calCo)
-    x_tot = x_tot + x_curr;
-    y_tot = y_tot + y_curr;
-    z_tot = z_tot + z_curr;
-end
 
-line([0 x_tot],[0 0],[0 0],'Linewidth',2, 'color', 'b')
-line([0 0],[0 y_tot],[0 0],'Linewidth',2, 'color', 'r')
-line([0 0],[0 0],[0 z_tot],'Linewidth',2, 'color', 'g')
-line([0 x_tot], [0 y_tot], [0 z_tot], 'Linewidth', 4, 'color', 'k');
+    line([0 x_curr],[0 0],[0 0],'Linewidth',2, 'color', 'b')
+    line([0 0],[0 y_curr],[0 0],'Linewidth',2, 'color', 'r')
+    line([0 0],[0 0],[0 z_curr],'Linewidth',2, 'color', 'g')
+    line([0 x_curr], [0 y_curr], [0 z_curr], 'Linewidth', 4, 'color', 'k');
 
-
-axis([-1.5 1.5 -1.5 1.5 -1.5 1.5]);
-drawnow;
-
-%%1B
-tic = 0;
-
-subplot(2, 1, 2)
-while toc < 100
-    [gx, gy, gz]=readAcc(accelerometer,calCo)
-    cla %Slow way of replotting
-    line([0 gx],[0 0],[0 0],'Linewidth',2, 'color', 'b')
-    line([0 0],[0 gy],[0 0],'Linewidth',2, 'color', 'g')
-    line([0 0],[0 0],[0 gz],'Linewidth',2, 'color', 'r')
-    line([0 gx], [0 gy], [0 gz], 'Linewidth', 4, 'color', 'k');
     axis([-1.5 1.5 -1.5 1.5 -1.5 1.5]);
+    drawnow;
+    grid on
+    title('3D Representation')
     xlabel('x')
     ylabel('y')
     zlabel('z')
+end
+
+%%1B
+tic = 0;
+Gx=rand(1,50);
+Gy=rand(1,50);
+Gz=rand(1,50);
+Rezult=rand(1,50);
+
+
+subplot(2, 1, 2)
+while toc < 40
+    cla
+    [gx, gy, gz]=readAcc(accelerometer,calCo)
+    result=sqrt((gx^2)+(gy^2)+(gz^2));
+    Gx=[Gx(2:end) gx];
+    Gy=[Gy(2:end) gy];
+    Gz=[Gz(2:end) gz];
+    Rezult=[Rezult(2:end) result];
+    plot(Gx,'b')
+    hold on
+    plot(Gy,'r')
+    plot(Gz,'g')
+    plot(Rezult,'k')
+    drawnow
+    axis([0 50 -1.5 1.5])
+    title('Rolling Plot')
+    xlabel('time')
+    ylabel('value')
+    legend('x value','y value','z value','resultant value','location','best')
     grid on
-    drawnow;
+
 end
 
 
