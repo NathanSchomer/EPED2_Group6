@@ -27,11 +27,11 @@ function varargout = firstTryGUI(varargin)
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @firstTryGUI_OpeningFcn, ...
-                   'gui_OutputFcn',  @firstTryGUI_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @firstTryGUI_OpeningFcn, ...
+    'gui_OutputFcn',  @firstTryGUI_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -63,7 +63,7 @@ guidata(hObject, handles);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = firstTryGUI_OutputFcn(hObject, eventdata, handles) 
+function varargout = firstTryGUI_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -79,12 +79,10 @@ function Calibrate_Callback(hObject, eventdata, handles)
 % hObject    handle to Calibrate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
- comPort='COM6';
- [accelerometer.s,flag]=setupSerial(comPort);
-
- calCo = calibrate(accelerometer.s);
- guidata(hObject, handles);% Update handles variables
-
+handles.comPort='/dev/cu.usbmodem1421';
+[handles.accelerometer, flag]=setupSerial(handles.comPort);
+handles.calCo = calibrate(handles.accelerometer);
+guidata(hObject, handles);% Update handles variables
 
 
 
@@ -97,23 +95,25 @@ closeSerial
 close all
 
 
+
+
 % --- Executes on button press in Plot.
 function Plot_Callback(hObject, eventdata, handles)
 % hObject    handle to Plot (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    axes(handles.axes1)
-    [gx, gy, gz]=readAcc(accelerometer,calCo)
-    cla %Slow way of replotting
-    line([0 gx],[0 0],[0 0],'Linewidth',2, 'color', 'b')
-    line([0 0],[0 gy],[0 0],'Linewidth',2, 'color', 'g')
-    line([0 0],[0 0],[0 gz],'Linewidth',2, 'color', 'r')
-    line([0 gx], [0 gy], [0 gz], 'Linewidth', 4, 'color', 'k');
-    xlabel('x')
-    ylabel('y')
-    zlabel('z')
-    grid on
-    drawnow;
-    
-    
-    guidata(hObject, handles);% Update handles variables
+
+axes(handles.axes1)
+[gx, gy, gz]=readAcc(handles.accelerometer,handles.calCo)
+cla %Slow way of replotting
+line([0 gx],[0 0],[0 0],'Linewidth',2, 'color', 'b')
+line([0 0],[0 gy],[0 0],'Linewidth',2, 'color', 'g')
+line([0 0],[0 0],[0 gz],'Linewidth',2, 'color', 'r')
+line([0 gx], [0 gy], [0 gz], 'Linewidth', 4, 'color', 'k');
+xlabel('x')
+ylabel('y')
+zlabel('z')
+grid on
+drawnow;
+
+guidata(hObject, handles);% Update handles variables

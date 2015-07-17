@@ -4,7 +4,7 @@ close all
 clc
 %%Part 1
  %setup serial communication
- comPort='COM6';
+ comPort='/dev/tty.usbmodem1421'; 
  [accelerometer.s,flag]=setupSerial(comPort);
  
  %calibrate accel
