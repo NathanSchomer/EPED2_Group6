@@ -1,0 +1,8 @@
+These are just a few ideas I had for the final project with short descriptions of each. Please feel
+free to add any you guys think of.
+
+Final Project Ideas:
+
+1. Robot Control via ROS
+	-this setup would invovle publishing accelerometer data to a ROS topic via the Ro<F9><F10
+>

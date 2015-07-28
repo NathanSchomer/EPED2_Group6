@@ -123,15 +123,24 @@ Gz=rand(1,50);
 Rezult=rand(1,50);
 
 tic;
+
+%loop for 20 seconds
 while toc < 20
-    cla
-    [gx, gy, gz]=readAcc(handles.accelerometer,handles.calCo)
+    cla           %clear axes
+    
+    [gx, gy, gz]=readAcc(handles.accelerometer,handles.calCo) %get data from accel
+    
+    %calculate resultant vector
     result=sqrt((gx^2)+(gy^2)+(gz^2));
     Gx=[Gx(2:end) gx];
     Gy=[Gy(2:end) gy];
     Gz=[Gz(2:end) gz];
     Rezult=[Rezult(2:end) result];
+    
+    %axes handle for GUI
     axes(handles.axes1)
+    
+    %Plot settings, labels, and legend
     plot(Gx,'b')
     hold on
     plot(Gy,'r')
@@ -145,6 +154,7 @@ while toc < 20
     legend('x value','y value','z value','resultant value','location','best')
     grid on
 end
+
 guidata(hObject, handles);% Update handles variables
 
 
@@ -153,15 +163,24 @@ function Plot_Circle_Callback(hObject, eventdata, handles)
 % hObject    handle to Plot_Circle (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
 circle_vector = (0:360);
 x = cosd(circle_vector);
 y = sind(circle_vector);
+
+%handle for GUI
 axes(handles.axes2)
 tic;
 circle = fill(x, y, [0 0 1]);
+
+%loop for 10 seconds
 while toc < 10
     axes(handles.axes2)
+    
+    %get data from accelerometer
     [gx, gy, gz]=readAcc(handles.accelerometer,handles.calCo);
+    
+    %plot data, axis limits, and labels
     fill( y-(10*gy),x-(10*gx), [0 0 1])
     axis([-10 10 -10 10])
     drawnow
