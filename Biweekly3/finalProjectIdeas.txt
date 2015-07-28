@@ -4,5 +4,20 @@ free to add any you guys think of.
 Final Project Ideas:
 
 1. Robot Control via ROS
-	-this setup would invovle publishing accelerometer data to a ROS topic via the Ro<F9><F10
->
+	-this setup would invovle publishing accelerometer data to a ROS topic via the Robot Control Toolbox
+	-There are two main issues with this idea. The first is that the Robot Control Toolbox costs money beyond the free
+		30-day trial. The second is that the hardware setup may become more cumberson than the MATLAB code itself.
+
+2. Sleep Analysis
+	-this project would involve attaching the accelerometer to an arm band to record data through the night. The user 
+		could use the GUI to view their sleep cycles, set an alarm to wake them up after a certain number of 
+		REM cycles, and track the length of sleep over multiple nights.
+	-The only real issue with this idea is that sleep analysis via accelerometer isn't very accurate. However, I don't 
+		think it actually matters if it's accurate or not, as long as the GUI looks good and it works the same as
+		we document it in the code and final presentation.
+	-The great thing about this proejct is how [potentially] easy it is. The calculations would involve pretty much just
+		adding the magnitudes from the X, Y & Z axes and then plotting them after some basic filtering.
+	-Also, I have a sewing machine for us to make an arm band for the accelerometer
+	-Testing would involve sleeping... what could be better than that??
+
+3.  
