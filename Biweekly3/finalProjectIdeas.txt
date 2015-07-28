@@ -20,4 +20,15 @@ Final Project Ideas:
 	-Also, I have a sewing machine for us to make an arm band for the accelerometer
 	-Testing would involve sleeping... what could be better than that??
 
-3.  
+3.  Flight Simulation
+	- use accelerometer tilt to control pitch of a UAV simulator
+	- constant forward motion to simplify
+	- use scrolling environment to add obstacles
+	- advantages of 2D: simple design, easier to fly
+	- advantages of 3D: 
+
+4. Camera setup
+	- use accelerometer tilt to control pitch of camera
+	- gimbel attached to a camera will display live feed of environment allowing user to control view of the camera
+	- animated object will be viewfinder display, indicates rotational location of camera view as well as 3D pitch of 
+		camera setup
