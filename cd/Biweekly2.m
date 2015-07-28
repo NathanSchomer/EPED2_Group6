@@ -2,10 +2,9 @@
 clear
 close all
 clc
-
 %%Part 1
  %setup serial communication
- comPort='/dev/tty.usbmodem1421';
+ comPort='/dev/tty.usbmodem1421'; 
  [accelerometer.s,flag]=setupSerial(comPort);
  
  %calibrate accel
@@ -19,6 +18,7 @@ x_tot = 0;
 y_tot = 0;
 z_tot = 0;
 
+subplot(2, 1, 1)
 while toc < 2
     [x_curr, y_curr, z_curr]=readAcc(accelerometer,calCo)
     x_tot = x_tot + x_curr;
@@ -26,9 +26,11 @@ while toc < 2
     z_tot = z_tot + z_curr;
 end
 
-line([x_tot 0 0],[0 0 0],[0 0 0],'Linewidth',2)
-line([0 0 0],[0 y_tot 0],[0 0 0],'Linewidth',2)
-line([0 0 0],[0 0 0],[0 0 z_tot],'Linewidth',2)
+line([0 x_tot],[0 0],[0 0],'Linewidth',2, 'color', 'b')
+line([0 0],[0 y_tot],[0 0],'Linewidth',2, 'color', 'r')
+line([0 0],[0 0],[0 z_tot],'Linewidth',2, 'color', 'g')
+line([0 x_tot], [0 y_tot], [0 z_tot], 'Linewidth', 4, 'color', 'k');
+
 
 axis([-1.5 1.5 -1.5 1.5 -1.5 1.5]);
 drawnow;
@@ -36,6 +38,7 @@ drawnow;
 %%1B
 tic = 0;
 
+subplot(2, 1, 2)
 while toc < 100
     [gx, gy, gz]=readAcc(accelerometer,calCo)
     cla %Slow way of replotting
