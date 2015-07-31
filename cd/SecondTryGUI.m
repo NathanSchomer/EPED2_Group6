@@ -22,7 +22,7 @@ function varargout = SecondTryGUI(varargin)
 
 % Edit the above text to modify the response to help SecondTryGUI
 
-% Last Modified by GUIDE v2.5 28-Jul-2015 17:46:08
+% Last Modified by GUIDE v2.5 31-Jul-2015 03:00:01
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -43,7 +43,6 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-
 % --- Executes just before SecondTryGUI is made visible.
 function SecondTryGUI_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -61,7 +60,6 @@ guidata(hObject, handles);
 % UIWAIT makes SecondTryGUI wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
-
 % --- Outputs from this function are returned to the command line.
 function varargout = SecondTryGUI_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -71,7 +69,6 @@ function varargout = SecondTryGUI_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
-
 
 % --- Executes on button press in Start.
 function Start_Callback(hObject, eventdata, handles)
@@ -90,9 +87,47 @@ if(~exist('handles.calCo', 'var'))
 end
 
 set(handles.Plot, 'Enable', 'on')
-set(handles.SMA, 'Enable', 'on')
 %set(handles.serialStartTextBox, 'String', 'Done!');
 guidata(hObject, handles);
+
+
+% --- Executes on button press in Plot.
+function Plot_Callback(hObject, eventdata, handles)
+% hObject    handle to Plot (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of Plot
+
+set(hObject,'String','Stop Plotting');
+handles.str = get(hObject, 'String');
+cla
+
+buffer=200; %Set buffer length
+mag_raw=zeros(1,buffer); % Magnitude raw data
+set(handles.SMA, 'Enable', 'on')
+
+index=1:buffer; % Index for plotting
+P1=plot(index,mag_raw); % Initialize plots
+hold on
+legend('Raw Data')
+
+while get(hObject, 'Value') ==  1
+    
+    if get(hObject, 'Value') == 0
+        break
+    end
+    [gx, gy, gz]=readAcc(handles.accelerometer,handles.calCo) ; % Read data from accelerometer
+    mag_raw_new=sqrt(gx^2+gy^2+gz^2); % Calculate raw magnitude
+    mag_raw=[mag_raw(2:end) mag_raw_new]; % Shift raw data vector and add new data point for rolling plots
+    set(P1,'ydata',mag_raw); % Update plots
+    axis([0 buffer 0 2.5]); % Set axis limits
+    drawnow % Update the plots
+
+    
+end
+set(hObject,'String','Start Plotting')
+
 
 
 % --- Executes on button press in SMA.
@@ -101,8 +136,9 @@ function SMA_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-set(hObject,'String','Stop');
+set(hObject,'String','Stop SMA');
 handles.str = get(hObject, 'String');
+handles.countThresh = 0;
 cla
 
 buffer=200; %Set buffer length
@@ -116,12 +152,11 @@ hold on
 P2=plot(index,mag_filt,'r','Linewidth',2);
 legend('Raw Data','Filtered Data')
 
+count=0; % Variable to count threshold crossings
 threshold=1.5; % Set threshold
 plot([0, buffer],[threshold, threshold],'g','Linewidth',3) % Plot threshold line
 while get(hObject, 'Value') ==  1
     
-    count=0; % Variable to count threshold crossings
-    tic % Start timer
     [gx, gy, gz]=readAcc(handles.accelerometer,handles.calCo) ; % Read data from accelerometer
     mag_raw_new=sqrt(gx^2+gy^2+gz^2); % Calculate raw magnitude
     mag_raw=[mag_raw(2:end) mag_raw_new]; % Shift raw data vector and add new data point for rolling plots
@@ -132,19 +167,16 @@ while get(hObject, 'Value') ==  1
     set(P1,'ydata',mag_raw); % Update plots
     set(P2,'ydata',mag_filt);
     axis([0 buffer 0 2.5]); % Set axis limits
-    
-    if mag_filt_new>threshold && mag_filt(end-1)<threshold % If current point is above threshold, and last point was below threshold
-        count=count+1; % Add to count
+    if handles.countThresh == 1
+        if mag_filt_new>threshold && mag_filt(end-1)<threshold % If current point is above threshold, and last point was below threshold
+            count=count+1; % Add to count
+        end
     end
     title(['Threshold Crossings = ' num2str(count)]) % Title displays threshold counts
     drawnow % Update the plots
     
 end
-set(hObject,'String','Start')
-
-
-
-
+set(hObject,'String','Start SMA')
 
 % --- Executes on button press in Exit.
 function Exit_Callback(hObject, eventdata, handles)
@@ -154,3 +186,13 @@ function Exit_Callback(hObject, eventdata, handles)
 closeSerial
 close all
 
+% --- Executes on button press in Thresh.
+function Thresh_Callback(hObject, eventdata, handles)
+% hObject    handle to Thresh (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of Thresh
+if get(hObject, 'Value') == 1
+    handles.countThresh = 1;
+end
