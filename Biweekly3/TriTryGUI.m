@@ -22,7 +22,7 @@ function varargout = TriTryGUI(varargin)
 
 % Edit the above text to modify the response to help TriTryGUI
 
-% Last Modified by GUIDE v2.5 31-Jul-2015 18:11:13
+% Last Modified by GUIDE v2.5 31-Jul-2015 19:51:11
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -75,7 +75,7 @@ function Start_Callback(hObject, ~, handles)
 % hObject    handle to Start (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-handles.comPort = '/dev/cu.usbmodem1411';
+handles.comPort = 'COM6';
 
 if (~exist('serialFlag', 'var'))
     [handles.accelerometer.s, handles.serialFlag] = ...
@@ -87,9 +87,7 @@ if(~exist('handles.calCo', 'var'))
 end
 
 set(handles.Plot, 'Enable', 'on')
-set(handles.editable1, 'Enable', 'on')
-set(handles.RunAlphaGo, 'Enable', 'on')
-set(handles.Thresh, 'Enable', 'on')
+set(handles.AllowFiltering, 'Enable', 'on')
 %set(handles.serialStartTextBox, 'String', 'Done!');
 guidata(hObject, handles);
 
@@ -108,7 +106,6 @@ cla
 
 buffer=200; %Set buffer length
 mag_raw=zeros(1,buffer); % Magnitude raw data
-set(handles.SMA, 'Enable', 'on')
 
 index=1:buffer; % Index for plotting
 P1=plot(index,mag_raw); % Initialize plots
@@ -277,3 +274,24 @@ while get(hObject, 'value') == 1
 end
 
 guidata(hObject, handles);% Update handles variables
+
+
+% --- Executes on button press in AllowFiltering.
+function AllowFiltering_Callback(hObject, ~, handles)
+% hObject    handle to AllowFiltering (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of AllowFiltering
+set(hObject,'String','Do not use filtering');
+handles.str = get(hObject, 'String');
+
+while get(hObject, 'Value') ==  1
+set(handles.editable1, 'Enable', 'on')
+set(handles.RunAlphaGo, 'Enable', 'on')
+set(handles.Thresh, 'Enable', 'on')
+end
+set(handles.editable1, 'Enable', 'off')
+set(handles.RunAlphaGo, 'Enable', 'off')
+set(handles.Thresh, 'Enable', 'off')
+guidata(hObject, handles);
