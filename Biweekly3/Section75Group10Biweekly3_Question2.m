@@ -131,7 +131,7 @@ cla
     set(radar,'facealpha',0.25); % set 25% opacity
     set(radar,'edgecolor','none'); % remove edges
     hold on
-    rotation(ang_deg) = [cosd(ang_deg) -sind(ang_deg); sind(ang_deg) cosd(ang_deg)];
+    rotation(ang_deg)=[cosd(ang_deg) -sind(ang_deg); sind(ang_deg) cosd(ang_deg)];
     
     d = 2;
     angle = 0:0.01:2*pi;
