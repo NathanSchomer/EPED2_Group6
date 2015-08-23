@@ -123,9 +123,7 @@ if strcmp(get(handles.start,'String'),'Start') % If the start button is clicked
             ycount4 = ycount4 + 1;
         end
         
-        % Set title to display amount of times thresholds have been crossed
-        % For Nate: "xt1" = Number of times the x value crosses the
-        % first positive threshold
+        % Set title to display amount of times thresholds have
         title(['xt1: ' num2str(xcount1) ' ', 'xt2: ' num2str(xcount2) ' ', 'xt3: ' num2str(xcount3) ' ',...
             'xt4: ' num2str(xcount4) ' ', 'yt1: ' num2str(ycount1) ' ', 'yt2: ' num2str(ycount2) ' ',...
             'yt3: ' num2str(ycount3) ' ', 'yt4: ' num2str(ycount4) ' '])
