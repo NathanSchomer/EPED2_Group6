@@ -77,6 +77,15 @@ plot([0, 200], [thresh2, thresh2], 'k', 'Linewidth', 1); % Plot second positive 
 plot([0, 200], [thresh3, thresh3], 'k', 'Linewidth', 1); % Plot first negative threshold line
 plot([0, 200], [thresh4, thresh4], 'k', 'Linewidth', 1); % Plot second negative threshold line
 
+%setup control arduino and servos
+a = arduino('/dev/cu.usbserial-A8004ITT', 'uno', 'Libraries', 'Servo')
+tiltServo = servo(a, 'D10')
+panServo  = servo(a,  'D9')
+
+%write initial servo positions
+writePosition(tiltServo, 0.5)
+writePosition(panServo, 0.23)
+
 if strcmp(get(handles.start,'String'),'Start') % If the start button is clicked
     set(handles.start,'String','Stop'); % Change string to 'Stop'
     while strcmp(get(handles.start,'String'),'Stop')
@@ -96,8 +105,16 @@ if strcmp(get(handles.start,'String'),'Start') % If the start button is clicked
         %Update plots
         set(x_filtered, 'ydata', xfilter)
         set(y_filtered, 'ydata', yfilter)
-        
-        % Analyze filtered data to utilize thresholds
+
+	if(new_xfilter >= 0 && new_xfilter <= 1)	
+		writePosition(panServo, new_xfilter)
+	end
+	
+	if(new_yfilter >= 0 && new_yfilter <= 1)
+		writePosition(tiltServo, new_yfilter)
+	end
+
+	% Analyze filtered data to utilize thresholds
         if new_xfilter > thresh1 && xfilter(end-1) < thresh1
             xcount1 = xcount1 + 1;
         end
