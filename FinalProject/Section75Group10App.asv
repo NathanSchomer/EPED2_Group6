@@ -185,9 +185,7 @@ uiwait(handles.dialog3)
 handles.dialog4=msgbox('To control the rotation of the servo, tilt the accelerometer about the x-axis.');
 uiwait(handles.dialog4)
 
-handles.dialog5=msgbox('Note, servo rotation will be controlled only by input and not locked in place.');
-uiwait(handles.dialog5)
-
+handles.dialog5=msgbox('Note, servo rotation 
 
 handles.dialogF=msgbox('Now you know how to operate the camera module.');
 uiwait(handles.dialogF)
