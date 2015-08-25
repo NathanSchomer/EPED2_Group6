@@ -51,44 +51,65 @@ yfilter = zeros(200, 1);
 xfilter = zeros(200, 1);
 handles.gx_vector = zeros(1, 200); % Buffer spacing
 handles.gy_vector = zeros(1, 200); % Buffer spacing
-handles.alphaValue = .8; % Alpha Value for filtering
+handles.alphaValue = .1; % Alpha Value for filtering
 
-% Initialize threshold values 
-thresh1 = 1.0; 
+% Initialize threshold values
+thresh1 = 1.0;
 thresh2 = 1.5;
 thresh3 = -1.0;
 thresh4 = -1.5;
 
-% Initialize threshold counts to zero 
+% Initialize threshold counts to zero
 % Even numbers are positive threshold counts, odd numbers are negative
 [xcount1, xcount2, xcount3, xcount4, ycount1, ycount2, ycount3, ycount4] = deal(0);
 
-axes(handles.testAxes)
-axis([0 200 -3 3])
-hold on
+% axes(handles.testAxes)
+% axis([0 200 -3 3])
+% hold on
 
 % Set up plots
 y_filtered = plot(yfilter, 'g', 'Linewidth', 2); % Plot for x and y filtered values
 x_filtered = plot(xfilter, 'r', 'Linewidth', 2);
 
 % Plot thresholds (visual representation, of no actual importance to data)
-plot([0, 200], [thresh1, thresh1], 'k', 'Linewidth', 1); % Plot first positive threshold line
-plot([0, 200], [thresh2, thresh2], 'k', 'Linewidth', 1); % Plot second positive threshold line
-plot([0, 200], [thresh3, thresh3], 'k', 'Linewidth', 1); % Plot first negative threshold line
-plot([0, 200], [thresh4, thresh4], 'k', 'Linewidth', 1); % Plot second negative threshold line
+% plot([0, 200], [thresh1, thresh1], 'k', 'Linewidth', 1); % Plot first positive threshold line
+% plot([0, 200], [thresh2, thresh2], 'k', 'Linewidth', 1); % Plot second positive threshold line
+% plot([0, 200], [thresh3, thresh3], 'k', 'Linewidth', 1); % Plot first negative threshold line
+% plot([0, 200], [thresh4, thresh4], 'k', 'Linewidth', 1); % Plot second negative threshold line
 
+axes(handles.videoFeed)
+cam = webcam;
+img = snapshot(cam);
+handles.screenshot = imshow(img);
 %setup control arduino and servos
-a = arduino('/dev/cu.usbserial-A8004ITT', 'uno', 'Libraries', 'Servo')
-tiltServo = servo(a, 'D10')
-panServo  = servo(a,  'D9')
+a = arduino('/dev/cu.usbserial-A8004ITT', 'uno', 'Libraries', 'Servo');
+tiltServo = servo(a, 'D10');
+panServo  = servo(a,  'D9');
 
-%write initial servo positions
-writePosition(tiltServo, 0.5)
-writePosition(panServo, 0.23)
+% Write initial servo positions
+writePosition(tiltServo, 0.44) % Keep between .22 and .65
+writePosition(panServo, 0.51) % Keep between .3 and .75
 
 if strcmp(get(handles.start,'String'),'Start') % If the start button is clicked
     set(handles.start,'String','Stop'); % Change string to 'Stop'
     while strcmp(get(handles.start,'String'),'Stop')
+        
+        get(handles.resetButton, 'Value')
+        get(handles.freezeButton, 'Value')
+        
+        handles.screenshot = imshow(img);
+        
+        % Reset the platform position to the original value
+        while handles.resetButton == 1
+            writePosition(tiltServo, 0.44)
+            writePosition(panServo, 0.51)
+        end
+        
+        % Freeze the platform 
+        while get(handles.freezeButton, 'Value') == 1
+            writePosition(tiltServo, tiltServo)
+            writePosition(panServo, panServo)
+        end
         
         % Read Accelerometer
         [handles.gx, handles.gy, handles.gz]=readAcc(accelerometer, calCo) ; % Read data from accelerometer
@@ -99,22 +120,22 @@ if strcmp(get(handles.start,'String'),'Start') % If the start button is clicked
         new_yfilter = (1 - handles.alphaValue) * yfilter(end) + handles.alphaValue * handles.gy_vector(end);
         yfilter = [yfilter(2:end); new_yfilter];
         
-        new_xfilter = (1 - handles.alphaValue) * yfilter(end) + handles.alphaValue * handles.gx_vector(end);
+        new_xfilter = (1 - handles.alphaValue) * xfilter(end) + handles.alphaValue * handles.gx_vector(end);
         xfilter = [xfilter(2:end); new_xfilter];
         
         %Update plots
         set(x_filtered, 'ydata', xfilter)
         set(y_filtered, 'ydata', yfilter)
-
-	if(new_xfilter >= 0 && new_xfilter <= 1)	
-		writePosition(panServo, new_xfilter)
-	end
-	
-	if(new_yfilter >= 0 && new_yfilter <= 1)
-		writePosition(tiltServo, new_yfilter)
-	end
-
-	% Analyze filtered data to utilize thresholds
+        
+        if(new_xfilter >= 0 && new_xfilter <= 1)
+            writePosition(panServo, new_xfilter)
+        end
+        
+        if(new_yfilter >= 0 && new_yfilter <= 1)
+            writePosition(tiltServo, new_yfilter)
+        end
+        
+        % Analyze filtered data to utilize thresholds
         if new_xfilter > thresh1 && xfilter(end-1) < thresh1
             xcount1 = xcount1 + 1;
         end
@@ -124,7 +145,7 @@ if strcmp(get(handles.start,'String'),'Start') % If the start button is clicked
         if new_xfilter < thresh3 && xfilter(end-1) > thresh3
             xcount3 = xcount3 + 1;
         end
-        if new_xfilter < thresh4 && xfilter(end-1) > thresh4 
+        if new_xfilter < thresh4 && xfilter(end-1) > thresh4
             xcount4 = xcount4 + 1;
         end
         if new_yfilter > thresh1 && yfilter(end-1) < thresh1
@@ -146,16 +167,25 @@ if strcmp(get(handles.start,'String'),'Start') % If the start button is clicked
         title(['xt1: ' num2str(xcount1) ' ', 'xt2: ' num2str(xcount2) ' ', 'xt3: ' num2str(xcount3) ' ',...
             'xt4: ' num2str(xcount4) ' ', 'yt1: ' num2str(ycount1) ' ', 'yt2: ' num2str(ycount2) ' ',...
             'yt3: ' num2str(ycount3) ' ', 'yt4: ' num2str(ycount4) ' '])
- 
-        drawnow % Go ahead and draw that plot           
+        
+        drawnow % Go ahead and draw that plot
     end
     
 elseif strcmp(get(handles.start, 'String'), 'Stop') % If the string changes
     set(handles.start, 'String', 'Start'); % Set the value to start and clear the axis
     cla
+    
 end
 guidata(hObject, handles)
 
 % Executes during object deletion, before destroying properties.
 function figure1_DeleteFcn(~,~,~)
 closeSerial
+
+% --- Executes on button press in resetButton.
+function resetButton_Callback(hObject, ~, handles)
+handles.resetButton = get(hObject, 'Value');
+
+% --- Executes on button press in freezeButton.
+function freezeButton_Callback(hObject, ~, handles)
+handles.freezeButton = get(hObject, 'Value');
