@@ -182,7 +182,6 @@ guidata(hObject, handles)
 function figure1_DeleteFcn(~,~,~)
 closeSerial
 
-<<<<<<< HEAD
 % --- Executes on button press in instruct.
 function instruct_Callback(hObject,~, handles) %#ok<*DEFNU>
 % hObject    handle to instruct (see GCBO)
@@ -215,7 +214,6 @@ uiwait(handles.dialog5)
 handles.dialogF=msgbox('Now you know how to operate the camera module.');
 uiwait(handles.dialogF)
 
-=======
 % --- Executes on button press in resetButton.
 function resetButton_Callback(hObject, ~, handles)
 handles.resetButton = get(hObject, 'Value');
@@ -223,4 +221,3 @@ handles.resetButton = get(hObject, 'Value');
 % --- Executes on button press in freezeButton.
 function freezeButton_Callback(hObject, ~, handles)
 handles.freezeButton = get(hObject, 'Value');
->>>>>>> origin/master
